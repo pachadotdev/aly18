@@ -10,6 +10,66 @@ The code is organized into five scripts, `00-helpers.r` avoids repeating the sam
 
 Important note about multilateral resistances: OMR and IMR are power transforms of the price indexes, the paper reports the change in the price indexes. The indexes results in `original-data/all_indexes_geppml.dta` have to be transformed to compare with this independent replication.
 
+To replicate the reported standard errors you need to use the `pair` variable to compute a sandwich variance-covariance matrix, as in this comparison:
+
+```r
+> fit_bln <- fepoisson(
++   trade ~ LN_DIST + CNTG + BRDR | exporter + importer,
++   data = dt,
++   control = ctrl
++ )
+> 
+> summary(fit_bln)
+Formula: trade ~ LN_DIST + CNTG + BRDR | exporter + importer
+
+Family: Poisson
+
+Estimates:
+
+|         | Estimate | Std. Error | z value     | Pr(>|z|)  |
+|---------|----------|------------|-------------|-----------|
+| LN_DIST |  -0.9485 |     0.0000 | -35413.7422 | 0.0000 ** |
+| CNTG    |   0.4783 |     0.0001 |   9132.9997 | 0.0000 ** |
+| BRDR    |  -1.5546 |     0.0001 | -26558.7823 | 0.0000 ** |
+
+Significance codes: ** p < 0.01; * p < 0.05; + p < 0.10
+
+Pseudo R-squared: 0.9961 
+
+Fixed effects:
+  exporter: 41
+  importer: 41
+
+Number of observations: Full 1681; Missing 0; Perfect classification 0 
+
+Number of Fisher Scoring iterations: 11 
+```
+
+```r
+> fit_bln <- fepoisson(
++   trade ~ LN_DIST + CNTG + BRDR | exporter + importer | pair,
++   data = dt,
++   control = ctrl
++ )
+
+summary(fit_bln)
+> 
+> summary(fit_bln)
+Formula: trade ~ LN_DIST + CNTG + BRDR | exporter + importer | pair
+
+Family: Poisson
+
+Estimates:
+
+|         | Estimate | Std. Error | z value  | Pr(>|z|)  |
+|---------|----------|------------|----------|-----------|
+| LN_DIST |  -0.9485 |     0.0524 | -18.1106 | 0.0000 ** |
+| CNTG    |   0.4783 |     0.1023 |   4.6769 | 0.0000 ** |
+| BRDR    |  -1.5546 |     0.1219 | -12.7541 | 0.0000 ** |
+
+Significance codes: ** p < 0.01; * p < 0.05; + p < 0.10
+```
+
 # Results
 
 The CSV files for these tables are in `results/`.

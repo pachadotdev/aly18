@@ -10,6 +10,14 @@ fit_bln <- fepoisson(
 
 summary(fit_bln)
 
+# fit_bln <- fepoisson(
+#   trade ~ LN_DIST + CNTG + BRDR | exporter + importer | pair,
+#   data = dt,
+#   control = ctrl
+# )
+
+# summary(fit_bln)
+
 # trade costs, in the counterfactual there are no borders and the internal trade costs remain the same
 b <- coef(fit_bln)
 
