@@ -2,14 +2,17 @@
 
 Replication of 'GEPPML: General equilibrium analysis with PPML' (Anderson, Larch and Yotov, 2018).
 
-I could not find a working link to the original data used in the article, so I used a backup I found
-in the GEPPML-R repository (https://github.com/jamiubadmusng/GEPPML-R).
+I could not find a working link to the original data used in the article, so I used a backup I found in the GEPPML-R repository (https://github.com/jamiubadmusng/GEPPML-R).
 
 I was able to replicate Tables 1-3 using [capybara](https://github.com/pachadotdev/capybara). See below.
 
 The code is organized into five scripts, `00-helpers.r` avoids repeating the same across the scripts, `01-prepare-dataset.r` can be skipped as the CSV used for the other scripts to create the tables was added to this repository.
 
+Important note about multilateral resistances: OMR and IMR are power transforms of the price indexes, the paper reports the change in the price indexes. The indexes results in `original-data/all_indexes_geppml.dta` have to be transformed to compare with this independent replication.
+
 # Results
+
+The CSV files for these tables are in `results/`.
 
 ## Table 1: Effects of abolishing all international borders based on estimated trade costs
 
@@ -103,7 +106,7 @@ The code is organized into five scripts, `00-helpers.r` avoids repeating the sam
 |URY     |       98.14|       132.54|     0.58|     18.18|   -0.57|    -0.44|  -15.03|   -17.28|       17.66|
 |USA     |      146.33|       183.95|    -3.69|      5.23|    3.83|     4.26|   -8.05|   -10.24|        9.71|
 
-# Table 3: "Full Endowment" GE effects of abolishing international borders between US and Canada based on "estibrated" trade costs
+## Table 3: "Full Endowment" GE effects of abolishing international borders between US and Canada based on "estibrated" trade costs
 
 |country | exports_both| rGDP_both| imr_both| omr_both| prices_both| exports_asym| rGDP_asym| imr_asym| omr_asym| prices_asym|
 |:-------|------------:|---------:|--------:|--------:|-----------:|------------:|---------:|--------:|--------:|-----------:|
