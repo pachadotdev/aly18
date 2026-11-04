@@ -1,0 +1,744 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\muham\EGEI Dissertation\GEPPML_data_code\GEPPML_stata\geppml.log
+  log type:  text
+ opened on:  19 Jan 2026, 10:38:01
+
+. set more off
+
+. pause on
+
+. 
+. ******************
+. *I. Prepapre Data*
+. ******************
+. use ge_ppml_data_orig, replace 
+
+. *******************************
+. *1. Create aggregate variables*
+. *******************************
+. bysort exporter: egen output=sum(trade)
+
+. bysort importer: egen expndr=sum(trade)
+
+. ****************************************
+. *2. Chose a country for reference group*
+. ****************************************
+. replace exporter="ZZZ" if exporter=="DEU"
+(41 real changes made)
+
+. replace importer="ZZZ" if importer=="DEU"
+(41 real changes made)
+
+. gen expndr_deu0=expndr if importer=="ZZZ"
+(1,640 missing values generated)
+
+. egen expndr_deu=mean(expndr_deu0)
+
+. ************************
+. *3 Create Fixed Effects*
+. ************************
+. qui tab exporter, gen(exp_fe_)
+
+. qui tab importer, gen(imp_fe_)
+
+. ******************************
+. *4. Set additional parameters*
+. ******************************
+. scalar sigma=7
+
+. save ge_ppml_data, replace
+(file ge_ppml_data.dta not found)
+file ge_ppml_data.dta saved
+
+. 
+. **************************
+. *II. GE Analysis in Stata*
+. **************************
+. *****************************
+. *Step 1: `Baseline' Scenario*
+. *****************************
+. ***************************************
+. *Step 1.a: Estimate `Baseline' Gravity*
+. ***************************************
+. * Load data
+. use ge_ppml_data, clear
+
+. * Define number of countries
+. qui tab exporter
+
+. local NoC=r(r)
+
+. * Equation (9)
+. ppml trade LN_DIST CNTG BRDR exp_fe_* imp_fe_1-imp_fe_`=`NoC'-1', iter(30) noconst
+
+note: checking the existence of the estimates
+WARNING: trade has very large values, consider rescaling
+
+Number of regressors excluded to ensure that the estimates exist: 0
+Number of observations excluded: 0
+
+note: starting ppml estimation
+
+Iteration 1:  Deviance =  6.19e+09
+Iteration 2:  Deviance =  2.58e+09
+Iteration 3:  Deviance =  1.80e+09
+Iteration 4:  Deviance =  1.66e+09
+Iteration 5:  Deviance =  1.64e+09
+Iteration 6:  Deviance =  1.64e+09
+Iteration 7:  Deviance =  1.64e+09
+Iteration 8:  Deviance =  1.64e+09
+Iteration 9:  Deviance =  1.64e+09
+Iteration 10: Deviance =  1.64e+09
+Iteration 11: Deviance =  1.64e+09
+Iteration 12: Deviance =  1.64e+09
+
+Number of parameters: 84
+Number of observations: 1681
+Pseudo log-likelihood: -8.180e+08
+R-squared: .99606038
+Option strict is: off
+------------------------------------------------------------------------------
+             |               Robust
+       trade | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     LN_DIST |  -.9484553   .0523703   -18.11   0.000    -1.051099   -.8458114
+        CNTG |   .4782565   .1022586     4.68   0.000     .2778333    .6786797
+        BRDR |  -1.554552   .1218868   -12.75   0.000    -1.793446   -1.315658
+    exp_fe_1 |   23.83564   .4959594    48.06   0.000     22.86358     24.8077
+    exp_fe_2 |   24.64368   .3900082    63.19   0.000     23.87927    25.40808
+    exp_fe_3 |    23.1929   .3570203    64.96   0.000     22.49315    23.89265
+    exp_fe_4 |   21.42107   .4607951    46.49   0.000     20.51793    22.32421
+    exp_fe_5 |   23.72025   .3536518    67.07   0.000      23.0271    24.41339
+    exp_fe_6 |   20.96454   .8093919    25.90   0.000     19.37817    22.55092
+    exp_fe_7 |   25.28527   .4296024    58.86   0.000     24.44327    26.12728
+    exp_fe_8 |   24.74727    .354686    69.77   0.000      24.0521    25.44244
+    exp_fe_9 |   23.52131   .3216885    73.12   0.000     22.89081    24.15181
+   exp_fe_10 |   23.47544   .4597382    51.06   0.000     22.57437    24.37651
+   exp_fe_11 |   26.31546   .3663943    71.82   0.000     25.59734    27.03358
+   exp_fe_12 |    23.0353   .6186794    37.23   0.000     21.82272    24.24789
+   exp_fe_13 |   21.50733   .3031441    70.95   0.000     20.91318    22.10148
+   exp_fe_14 |   22.87964   .3317676    68.96   0.000     22.22939    23.52989
+   exp_fe_15 |    21.8881   .6211133    35.24   0.000     20.67074    23.10545
+   exp_fe_16 |   24.61048   .3471842    70.89   0.000     23.93001    25.29095
+   exp_fe_17 |   23.37163   .3326765    70.25   0.000     22.71959    24.02366
+   exp_fe_18 |   25.05711   .3281974    76.35   0.000     24.41385    25.70036
+   exp_fe_19 |   24.57737   .3281471    74.90   0.000     23.93422    25.22053
+   exp_fe_20 |   22.25075   .3848619    57.81   0.000     21.49643    23.00506
+   exp_fe_21 |   22.78761   .4299648    53.00   0.000     21.94489    23.63032
+   exp_fe_22 |   23.71466   .3961067    59.87   0.000      22.9383    24.49101
+   exp_fe_23 |   20.97684   .5779383    36.30   0.000      19.8441    22.10958
+   exp_fe_24 |   22.64188   .3276137    69.11   0.000     21.99977      23.284
+   exp_fe_25 |   25.03542   .3272277    76.51   0.000     24.39406    25.67677
+   exp_fe_26 |   26.29336   .3770145    69.74   0.000     25.55443     27.0323
+   exp_fe_27 |    24.8832    .391846    63.50   0.000     24.11519     25.6512
+   exp_fe_28 |   22.42762   .5079743    44.15   0.000     21.43201    23.42323
+   exp_fe_29 |   24.55142   .3911536    62.77   0.000     23.78477    25.31807
+   exp_fe_30 |   23.61795   .4231804    55.81   0.000     22.78853    24.44737
+   exp_fe_31 |   23.15805   .4379418    52.88   0.000      22.2997     24.0164
+   exp_fe_32 |   23.45024   .3946119    59.43   0.000     22.67682    24.22367
+   exp_fe_33 |   23.08709   .3578916    64.51   0.000     22.38563    23.78854
+   exp_fe_34 |   23.94461   .4860691    49.26   0.000     22.99193    24.89729
+   exp_fe_35 |   26.18088   .4049416    64.65   0.000     25.38721    26.97455
+   exp_fe_36 |   23.76186   .3326701    71.43   0.000     23.10984    24.41389
+   exp_fe_37 |   22.14322   .4791959    46.21   0.000     21.20401    23.08243
+   exp_fe_38 |   23.95005   .4177054    57.34   0.000     23.13136    24.76874
+   exp_fe_39 |   21.52286   .5772786    37.28   0.000     20.39141     22.6543
+   exp_fe_40 |   26.76794    .357204    74.94   0.000     26.06784    27.46805
+   exp_fe_41 |   25.38604   .3263476    77.79   0.000     24.74642    26.02567
+    imp_fe_1 |  -1.309754   .3815213    -3.43   0.001    -2.057522    -.561986
+    imp_fe_2 |  -.0247669   .1690719    -0.15   0.884    -.3561417    .3066078
+    imp_fe_3 |   -1.83392    .264105    -6.94   0.000    -2.351556   -1.316284
+    imp_fe_4 |  -3.442423   .3203157   -10.75   0.000     -4.07023   -2.814616
+    imp_fe_5 |  -1.172203   .1995133    -5.88   0.000    -1.563242   -.7811645
+    imp_fe_6 |  -3.567875   .4841863    -7.37   0.000    -4.516863   -2.618887
+    imp_fe_7 |   .3019673   .2421023     1.25   0.212    -.1725444    .7764791
+    imp_fe_8 |  -.1388378   .1340416    -1.04   0.300    -.4015546     .123879
+    imp_fe_9 |  -1.587736   .1478476   -10.74   0.000    -1.877512    -1.29796
+   imp_fe_10 |  -1.448032   .2912054    -4.97   0.000    -2.018784   -.8772801
+   imp_fe_11 |   .4568208   .1559635     2.93   0.003     .1511379    .7625036
+   imp_fe_12 |  -1.510572   .3688849    -4.09   0.000    -2.233573    -.787571
+   imp_fe_13 |  -2.903299   .1919121   -15.13   0.000     -3.27944   -2.527158
+   imp_fe_14 |  -2.107985   .1752366   -12.03   0.000    -2.451442   -1.764528
+   imp_fe_15 |  -2.391098   .3209731    -7.45   0.000    -3.020194   -1.762002
+   imp_fe_16 |  -.1975788   .1567594    -1.26   0.208    -.5048216    .1096639
+   imp_fe_17 |  -1.963226   .1375157   -14.28   0.000    -2.232752     -1.6937
+   imp_fe_18 |  -.0036674   .1272898    -0.03   0.977    -.2531508     .245816
+   imp_fe_19 |  -.1264252   .1572445    -0.80   0.421    -.4346188    .1817683
+   imp_fe_20 |  -1.868257   .1793252   -10.42   0.000    -2.219728   -1.516786
+   imp_fe_21 |  -2.222175   .2063458   -10.77   0.000    -2.626606   -1.817745
+   imp_fe_22 |  -2.118993   .3775938    -5.61   0.000    -2.859063   -1.378923
+   imp_fe_23 |  -3.840735   .3862883    -9.94   0.000    -4.597846   -3.083623
+   imp_fe_24 |  -2.105781    .198959   -10.58   0.000    -2.495733   -1.715828
+   imp_fe_25 |  -.0483566     .13555    -0.36   0.721    -.3140296    .2173165
+   imp_fe_26 |   .3969784   .1670287     2.38   0.017     .0696082    .7243486
+   imp_fe_27 |  -.9335543   .2309641    -4.04   0.000    -1.386236   -.4808731
+   imp_fe_28 |  -2.379735   .3358514    -7.09   0.000    -3.037992   -1.721478
+   imp_fe_29 |  -.1605944   .1891342    -0.85   0.396    -.5312906    .2101018
+   imp_fe_30 |  -1.517679   .3093158    -4.91   0.000    -2.123927   -.9114308
+   imp_fe_31 |  -1.578508    .245902    -6.42   0.000    -2.060468   -1.096549
+   imp_fe_32 |  -1.458558   .2281208    -6.39   0.000    -1.905666   -1.011449
+   imp_fe_33 |  -1.623787   .1824505    -8.90   0.000    -1.981384   -1.266191
+   imp_fe_34 |  -1.074789   .3763862    -2.86   0.004    -1.812493   -.3370858
+   imp_fe_35 |   1.277831   .1677512     7.62   0.000      .949045    1.606618
+   imp_fe_36 |  -1.578488   .1991652    -7.93   0.000    -1.968845   -1.188132
+   imp_fe_37 |  -2.736241   .3268774    -8.37   0.000    -3.376909   -2.095573
+   imp_fe_38 |  -.9821174   .2567368    -3.83   0.000    -1.485312   -.4789225
+   imp_fe_39 |  -3.453196   .4560086    -7.57   0.000    -4.346957   -2.559436
+   imp_fe_40 |   2.200365    .142231    15.47   0.000     1.921598    2.479133
+------------------------------------------------------------------------------
+
+. * Predict trade in the baseline (bsln)
+. predict trade_bsln, mu
+
+. * Save estimates
+. scalar DIST_est=_b[LN_DIST]
+
+. scalar BRDR_est=_b[BRDR]
+
+. scalar CNTG_est=_b[CNTG]
+
+. * Create trade costs
+. gen t_ij_bsln=exp(_b[LN_DIST]*LN_DIST+_b[CNTG]*CNTG+_b[BRDR]*BRDR)
+
+. gen t_ij_ctrf=exp(_b[LN_DIST]*LN_DIST+_b[CNTG]*CNTG+_b[BRDR]*BRDR*0)
+
+. replace t_ij_ctrf=t_ij_bsln if exporter==importer
+(0 real changes made)
+
+. gen t_ij_ctrf_1=log(t_ij_ctrf)
+
+. ******************************************
+. *Step 1.b: Construct `Baseline' GE Indexes*
+. ******************************************
+. forvalues i=1(1)`=`NoC'-1'{
+  2. qui replace exp_fe_`i'=exp_fe_`i'*exp(_b[exp_fe_`i'])
+  3. qui replace imp_fe_`i'=imp_fe_`i'*exp(_b[imp_fe_`i'])
+  4. }
+
+. qui replace exp_fe_`NoC'=exp_fe_`NoC'*exp(_b[exp_fe_`NoC'])
+
+. qui replace imp_fe_`NoC'=imp_fe_`NoC'*exp(0)
+
+. egen all_exp_fes_0=rowtotal(exp_fe_1-exp_fe_`NoC')
+
+. egen all_imp_fes_0=rowtotal(imp_fe_1-imp_fe_`NoC') 
+
+. gen temp=all_exp_fes_0 if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen all_exp_fes_0_TB=mean(temp)
+
+. drop temp
+
+. * Equation (7)
+. gen omr_bsln=output*expndr_deu/(all_exp_fes_0)
+
+. * Equation (8)
+. gen imr_bsln=expndr/(all_imp_fes_0*expndr_deu)
+
+. * Calculate real GDP
+. gen rGDP_bsln_temp=output/(imr_bsln^(1/(1-sigma))) if exporter==importer
+(1,640 missing values generated)
+
+. bysort exporter: egen rGDP_bsln=sum(rGDP_bsln_temp)
+
+. * Calculate share of domestic expenditure 
+. gen acr_bsln=trade_bsln/expndr if exporter==importer
+(1,640 missing values generated)
+
+. * Calcualte baseline bilateral exports
+. gen exp_bsln=trade_bsln if exporter!=importer
+(41 missing values generated)
+
+. * Calculate domestic expenditure for each country
+. gen exp_bsln_acr=trade_bsln if exporter==importer
+(1,640 missing values generated)
+
+. * Calculate total exports for each country
+. bysort exporter: egen tot_exp_bsln=sum(exp_bsln)
+
+. 
+. ********************************
+. *Step 2: `Conditional' Scenario*
+. ********************************
+. ******************************************
+. *Step 2.a: Estimate `Conditional' Gravity*
+. ******************************************
+. * Re-Create Fixed Effects
+. drop exp_fe_* imp_fe_*
+
+. qui tab exporter, gen(exp_fe_)
+
+. qui tab importer, gen(imp_fe_)
+
+. * Equation (11)
+. ppml trade exp_fe_* imp_fe_1-imp_fe_`=`NoC'-1', iter(30) noconst offset(t_ij_ctrf_1)
+
+note: checking the existence of the estimates
+WARNING: trade has very large values, consider rescaling
+
+Number of regressors excluded to ensure that the estimates exist: 0
+Number of observations excluded: 0
+
+note: starting ppml estimation
+
+Iteration 1:  Deviance =  1.19e+10
+Iteration 2:  Deviance =  7.68e+09
+Iteration 3:  Deviance =  6.78e+09
+Iteration 4:  Deviance =  6.56e+09
+Iteration 5:  Deviance =  6.52e+09
+Iteration 6:  Deviance =  6.51e+09
+Iteration 7:  Deviance =  6.51e+09
+Iteration 8:  Deviance =  6.51e+09
+Iteration 9:  Deviance =  6.51e+09
+Iteration 10: Deviance =  6.51e+09
+Iteration 11: Deviance =  6.51e+09
+
+Number of parameters: 81
+Number of observations: 1681
+Pseudo log-likelihood: -2.716e+13
+R-squared: .53149845
+Option strict is: off
+------------------------------------------------------------------------------
+             |               Robust
+       trade | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    exp_fe_1 |   22.76664   .7158111    31.81   0.000     21.36368    24.16961
+    exp_fe_2 |   23.86637    .577484    41.33   0.000     22.73452    24.99821
+    exp_fe_3 |   22.03899   .2578637    85.47   0.000     21.53358    22.54439
+    exp_fe_4 |   20.13498   .4776623    42.15   0.000     19.19878    21.07118
+    exp_fe_5 |   22.72259   .2544533    89.30   0.000     22.22387    23.22131
+    exp_fe_6 |   19.60694   .8772568    22.35   0.000     17.88755    21.32633
+    exp_fe_7 |   24.51948   .6136389    39.96   0.000     23.31677    25.72219
+    exp_fe_8 |   23.41224   .3755401    62.34   0.000     22.67619    24.14828
+    exp_fe_9 |   22.44567    .374444    59.94   0.000     21.71177    23.17957
+   exp_fe_10 |   22.41388   .6790252    33.01   0.000     21.08302    23.74475
+   exp_fe_11 |   25.39781   .3954904    64.22   0.000     24.62266    26.17296
+   exp_fe_12 |    21.9399    .919073    23.87   0.000     20.13855    23.74125
+   exp_fe_13 |    20.4779   .4840028    42.31   0.000     19.52927    21.42653
+   exp_fe_14 |   21.73511   .2551939    85.17   0.000     21.23494    22.23528
+   exp_fe_15 |   20.77314   .9126228    22.76   0.000     18.98443    22.56184
+   exp_fe_16 |   23.72739   .5123513    46.31   0.000      22.7232    24.73158
+   exp_fe_17 |   22.24651   .3586914    62.02   0.000     21.54349    22.94953
+   exp_fe_18 |   24.13893   .4349943    55.49   0.000     23.28636     24.9915
+   exp_fe_19 |   23.89598   .3008558    79.43   0.000     23.30632    24.48565
+   exp_fe_20 |   21.26633   .5880778    36.16   0.000     20.11372    22.41894
+   exp_fe_21 |   21.65697   .3630702    59.65   0.000     20.94537    22.36858
+   exp_fe_22 |   22.59879   .2985672    75.69   0.000     22.01361    23.18397
+   exp_fe_23 |   19.68737   .6979646    28.21   0.000     18.31938    21.05535
+   exp_fe_24 |   21.91236   .3503159    62.55   0.000     21.22575    22.59897
+   exp_fe_25 |   24.19097   .4232209    57.16   0.000     23.36147    25.02047
+   exp_fe_26 |   25.54156   .3088594    82.70   0.000     24.93621    26.14692
+   exp_fe_27 |   23.92737   .4356406    54.92   0.000     23.07353    24.78121
+   exp_fe_28 |   21.21826   .6430804    32.99   0.000     19.95785    22.47868
+   exp_fe_29 |   23.43281   .3736735    62.71   0.000     22.70042    24.16519
+   exp_fe_30 |   22.63394   .2348043    96.39   0.000     22.17373    23.09415
+   exp_fe_31 |   22.01869   .6012019    36.62   0.000     20.84035    23.19702
+   exp_fe_32 |   22.32116   .5380031    41.49   0.000      21.2667    23.37563
+   exp_fe_33 |   22.02147   .4691043    46.94   0.000     21.10205     22.9409
+   exp_fe_34 |   22.99151   .7568821    30.38   0.000     21.50805    24.47497
+   exp_fe_35 |   25.33944    .353544    71.67   0.000     24.64651    26.03238
+   exp_fe_36 |   22.62631   .2566234    88.17   0.000     22.12334    23.12928
+   exp_fe_37 |   20.92443    .593732    35.24   0.000     19.76074    22.08813
+   exp_fe_38 |   22.91561   .6104601    37.54   0.000     21.71913    24.11209
+   exp_fe_39 |   20.26201   .7027988    28.83   0.000     18.88455    21.63947
+   exp_fe_40 |   26.44786    .279612    94.59   0.000     25.89983    26.99589
+   exp_fe_41 |   24.56117   .4034876    60.87   0.000     23.77035    25.35199
+    imp_fe_1 |  -1.695779   .7806263    -2.17   0.030    -3.225779   -.1657801
+    imp_fe_2 |  -.2971452   .4803679    -0.62   0.536    -1.238649    .6443586
+    imp_fe_3 |  -2.309884   .3383545    -6.83   0.000    -2.973047   -1.646721
+    imp_fe_4 |  -4.076457     .44927    -9.07   0.000     -4.95701   -3.195904
+    imp_fe_5 |  -1.539059   .3092914    -4.98   0.000    -2.145259   -.9328591
+    imp_fe_6 |  -4.333015   .6309936    -6.87   0.000     -5.56974    -3.09629
+    imp_fe_7 |   .1762819    .616231     0.29   0.775    -1.031509    1.384073
+    imp_fe_8 |  -.9318705   .4511256    -2.07   0.039     -1.81606   -.0476805
+    imp_fe_9 |  -1.969681   .3976727    -4.95   0.000    -2.749105   -1.190257
+   imp_fe_10 |  -1.894523   .6524651    -2.90   0.004    -3.173331   -.6157154
+   imp_fe_11 |   .6494377   .4813583     1.35   0.177    -.2940072    1.592883
+   imp_fe_12 |  -2.112753   .7335255    -2.88   0.004    -3.550437   -.6750694
+   imp_fe_13 |  -3.498143   .3713307    -9.42   0.000    -4.225938   -2.770349
+   imp_fe_14 |  -2.580961   .3238856    -7.97   0.000    -3.215765   -1.946157
+   imp_fe_15 |  -3.057104   .6300214    -4.85   0.000    -4.291923   -1.822285
+   imp_fe_16 |  -.4978345   .4693627    -1.06   0.289    -1.417768    .4220995
+   imp_fe_17 |  -2.338611   .3984194    -5.87   0.000    -3.119498   -1.557723
+   imp_fe_18 |  -.2448361   .4918202    -0.50   0.619    -1.208786    .7191136
+   imp_fe_19 |  -.2938969   .2986542    -0.98   0.325    -.8792483    .2914546
+   imp_fe_20 |  -2.398315   .3831172    -6.26   0.000     -3.14921   -1.647419
+   imp_fe_21 |  -2.686019    .317415    -8.46   0.000    -3.308141   -2.063897
+   imp_fe_22 |   -2.31106   .2828088    -8.17   0.000    -2.865355   -1.756765
+   imp_fe_23 |  -4.499875   .5943375    -7.57   0.000    -5.664755   -3.334995
+   imp_fe_24 |  -2.295782   .3405408    -6.74   0.000     -2.96323   -1.628335
+   imp_fe_25 |  -.2051213   .4516078    -0.45   0.650    -1.090256    .6800137
+   imp_fe_26 |   .8206068   .3319464     2.47   0.013     .1700039     1.47121
+   imp_fe_27 |  -.8010451   .4582337    -1.75   0.080    -1.699167    .0970764
+   imp_fe_28 |  -2.970573   .5641026    -5.27   0.000    -4.076194   -1.864952
+   imp_fe_29 |  -.7805469   .4007521    -1.95   0.051    -1.566007    .0049129
+   imp_fe_30 |  -1.796837   .2966254    -6.06   0.000    -2.378212   -1.215462
+   imp_fe_31 |   -2.09852   .4982266    -4.21   0.000    -3.075026   -1.122013
+   imp_fe_32 |  -1.935002    .522622    -3.70   0.000    -2.959322   -.9106817
+   imp_fe_33 |  -2.111908   .4203332    -5.02   0.000    -2.935746    -1.28807
+   imp_fe_34 |   -1.36432   .7590998    -1.80   0.072    -2.852128    .1234887
+   imp_fe_35 |    1.05266   .3457054     3.04   0.002     .3750901     1.73023
+   imp_fe_36 |  -1.970338    .302387    -6.52   0.000    -2.563006    -1.37767
+   imp_fe_37 |  -3.313108    .538287    -6.15   0.000    -4.368131   -2.258084
+   imp_fe_38 |  -1.378303   .5823911    -2.37   0.018    -2.519769   -.2368375
+   imp_fe_39 |  -4.078284   .6855738    -5.95   0.000    -5.421984   -2.734584
+   imp_fe_40 |   2.265261   .2733315     8.29   0.000     1.729541    2.800981
+ t_ij_ctrf_1 |          1  (offset)
+------------------------------------------------------------------------------
+
+. * Predict trade in `Conditional' GE counterfactual (cndl)
+. predict trade_cndl, mu
+
+. **********************************************
+. *Step 2.b: Construct `Conditional' GE Indexes*
+. **********************************************
+. forvalues i=1(1)`=`NoC'-1'{
+  2. qui replace exp_fe_`i'=exp_fe_`i'*exp(_b[exp_fe_`i'])
+  3. qui replace imp_fe_`i'=imp_fe_`i'*exp(_b[imp_fe_`i'])
+  4. }
+
+. qui replace exp_fe_`NoC'=exp_fe_`NoC'*exp(_b[exp_fe_`NoC'])
+
+. qui replace imp_fe_`NoC'=imp_fe_`NoC'*exp(0)
+
+. egen all_exp_fes_1=rowtotal(exp_fe_1-exp_fe_`NoC')
+
+. egen all_imp_fes_1=rowtotal(imp_fe_1-imp_fe_`NoC')
+
+. * Equation (7)
+. gen omr_cndl=output*expndr_deu/(all_exp_fes_1)
+
+. * Equation (8)
+. gen imr_cndl=expndr/(all_imp_fes_1*expndr_deu)
+
+. * Calcualte baseline bilateral exports
+. gen exp_cndl=trade_cndl if exporter!=importer
+(41 missing values generated)
+
+. * Calculate total exports for each country
+. bysort exporter: egen tot_exp_cndl=sum(exp_cndl)
+
+. * Calculate change in total exports for each country
+. gen tot_exp_cndl_ch=(tot_exp_cndl-tot_exp_bsln)/tot_exp_bsln*100
+
+. * Calculate real GDP
+. gen rGDP_cndl_temp=output/(imr_cndl^(1/(1-sigma))) if exporter==importer
+(1,640 missing values generated)
+
+. bysort exporter: egen rGDP_cndl=sum(rGDP_cndl_temp)
+
+. 
+. ***********************************
+. *Step 3: `Full Endowment' Scenario*
+. ***********************************
+. *********************************************
+. *Step 3.a: Estimate `Full Endowment' Gravity*
+. *********************************************
+. * Define variables for loop
+. local i=3
+
+. local diff_all_exp_fes_sd=1
+
+. local diff_all_exp_fes_max=1
+
+. gen double trade_1_pred=trade_cndl
+
+. gen double output_bsln=output
+
+. gen double expndr_bsln=expndr
+
+. gen double phi=expndr/output if exporter==importer
+(1,640 missing values generated)
+
+. gen double temp=all_exp_fes_0 if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen double all_exp_fes_0_imp=mean(temp)
+
+. drop temp* 
+
+. 
+. gen double expndr_temp_1=phi*output if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen double expndr_1=mean(expndr_temp_1)
+
+. drop *temp*
+
+. gen double expndr_deu01_1=expndr_1 if importer=="ZZZ"
+(1,640 missing values generated)
+
+. egen double expndr_deu1_1=mean(expndr_deu01_1)
+
+. egen double expndr_deu_1=mean(expndr_deu01_1)
+
+. gen double temp=all_exp_fes_1 if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen double all_exp_fes_1_imp=mean(temp)
+
+. drop *temp*
+
+. gen double p_full_exp_0=0
+
+. gen double p_full_exp_1=(all_exp_fes_1/all_exp_fes_0)^(1/(1-sigma))
+
+. gen double p_full_imp_1=(all_exp_fes_1_imp/all_exp_fes_0_imp)^(1/(1-sigma))
+
+. gen double imr_full_1=expndr_1/(all_imp_fes_1*expndr_deu_1)
+
+. gen double imr_full_ch_1=1
+
+. gen double omr_full_1=output*expndr_deu_1/(all_exp_fes_1)
+
+. gen double omr_full_ch_1=1
+
+. 
+. * Start loop with convergence criteria that the mean and the standard devition of the difference in each of the factory-gate prices between two subseque
+> nt iterations is smaller than the pre-defined tolerance criterium of 0.001
+. while (`diff_all_exp_fes_sd'>0.001) | (`diff_all_exp_fes_max'>0.001) {
+  2. * Equation (14)
+. gen double trade_`=`i'-1'=trade_`=`i'-2'_pred*p_full_exp_`=`i'-2'*p_full_imp_`=`i'-2'/(omr_full_ch_`=`i'-2'*imr_full_ch_`=`i'-2')
+  3. drop exp_fe_* imp_fe_*
+  4. qui tab exporter, gen (exp_fe_)
+  5. qui tab importer, gen (imp_fe_)
+  6. * Equation (11)
+. capture glm trade_`=`i'-1' exp_fe_* imp_fe_*, family(poisson) offset(t_ij_ctrf_1) noconst irls iter(30) 
+  7. * Predict trade flows
+. predict trade_`=`i'-1'_pred, mu
+  8. forvalues j=1(1)`NoC'{
+  9. qui replace exp_fe_`j'=exp_fe_`j'*exp(_b[exp_fe_`j'])
+ 10. qui replace imp_fe_`j'=imp_fe_`j'*exp(_b[imp_fe_`j'])
+ 11. }
+ 12. egen double all_exp_fes_`=`i'-1'=rowtotal(exp_fe_1-exp_fe_`NoC') 
+ 13. egen double all_imp_fes_`=`i'-1'=rowtotal(imp_fe_1-imp_fe_`NoC')
+ 14. * Update output
+. bysort exporter: egen double output_`=`i'-1'=total(trade_`=`i'-1'_pred)
+ 15. * Update expenditure
+. bysort importer: egen double expndr_check_`=`i'-1'=total(trade_`=`i'-1'_pred)
+ 16. gen double expndr_deu0_`=`i'-1'=expndr_check_`=`i'-1' if importer=="ZZZ"
+ 17. egen double expndr_deu_`=`i'-1'=mean(expndr_deu0_`=`i'-1')
+ 18. gen double temp=all_exp_fes_`=`i'-1' if exporter==importer
+ 19. bysort importer: egen double all_exp_fes_`=`i'-1'_imp=mean(temp)
+ 20. drop temp* 
+ 21. * Update factory-gate prices
+. gen double p_full_exp_`=`i'-1'=((all_exp_fes_`=`i'-1'/all_exp_fes_`=`i'-2')/(expndr_deu_`=`i'-1'/expndr_deu_`=`i'-2'))^(1/(1-sigma))
+ 22. gen double p_full_imp_`=`i'-1'=((all_exp_fes_`=`i'-1'_imp/all_exp_fes_`=`i'-2'_imp)/(expndr_deu_`=`i'-1'/expndr_deu_`=`i'-2'))^(1/(1-sigma))
+ 23. * Equation (7)
+. gen double omr_full_`=`i'-1'=output_`=`i'-1'/all_exp_fes_`=`i'-1'
+ 24. gen double omr_full_ch_`=`i'-1'=omr_full_`=`i'-1'/omr_full_`=`i'-2'
+ 25. * Update expenditure
+. gen double expndr_temp_`=`i'-1'=phi*output_`=`i'-1' if exporter==importer
+ 26. bysort importer: egen double expndr_`=`i'-1'=mean(expndr_temp_`=`i'-1')
+ 27. * Equation (8)
+. gen double imr_full_`=`i'-1'=expndr_`=`i'-1'/(all_imp_fes_`=`i'-1'*expndr_deu_`=`i'-1')
+ 28. gen double imr_full_ch_`=`i'-1'=imr_full_`=`i'-1'/imr_full_`=`i'-2'
+ 29. * Convergence criteria in terms of changes in factory-gate prices
+. gen double diff_p_full_exp_`=`i'-1'=p_full_exp_`=`i'-2'-p_full_exp_`=`i'-3'
+ 30. sum diff_p_full_exp_`=`i'-1'
+ 31. local diff_all_exp_fes_sd=r(sd)
+ 32. local diff_all_exp_fes_max=abs(r(max))
+ 33. local i=`i'+1
+ 34. }
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~2 |      1,681    1.185998    .0392267   1.054796   1.253911
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~3 |      1,681    -.190478    .0448153  -.2676945  -.0397433
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~4 |      1,681     .004251    .0071529  -.0248055   .0149257
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~5 |      1,681    .0013251    .0052814  -.0041867   .0172399
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~6 |      1,681   -.0022478    .0047123  -.0138581   .0029014
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~7 |      1,681    .0021792    .0039554  -.0024607   .0114034
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~8 |      1,681   -.0018934    .0032492    -.00918   .0020631
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_ful~9 |      1,681     .001582     .002639  -.0017028    .007347
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_fu~10 |      1,681   -.0013003    .0021347  -.0058879   .0013923
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_fu~11 |      1,681    .0010589    .0017203  -.0011322   .0047144
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_fu~12 |      1,681   -.0008587    .0013851    -.00378   .0009179
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_fu~13 |      1,681    .0006942    .0011136  -.0007429   .0030293
+(1,640 missing values generated)
+(1,640 missing values generated)
+(1,640 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+diff_p_fu~14 |      1,681   -.0005605    .0008954  -.0024299   .0006007
+
+. *************************************************
+. *Step 3.a: Construct `Full Endowment' GE Indexes*
+. *************************************************
+. * Calculate p^c/p
+. drop output expndr expndr_deu0
+
+. rename expndr_deu expndr_deu_bsln
+
+. bysort exporter: egen double output=sum(trade_`=`i'-2'_pred)
+
+. gen double expndr_temp=phi*output if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen double expndr=mean(expndr_temp)
+
+. gen double expndr_deu0=expndr if importer=="ZZZ"
+(1,640 missing values generated)
+
+. egen double expndr_deu=mean(expndr_deu0) 
+
+. forvalues j=1(1)`NoC'{
+  2. qui replace imp_fe_`j'=imp_fe_`j'*exp(_b[imp_fe_`j'])
+  3. }
+
+. gen double p_full=((all_exp_fes_`=`i'-2'/all_exp_fes_0)/(expndr_deu/expndr_deu_bsln))^(1/(1-sigma))
+
+. * Calculate output
+. gen output_full=p_full*output_bsln
+
+. * Equation (7)
+. gen double omr_full=output_full*expndr_deu/(all_exp_fes_`=`i'-2')
+
+. * Equation (8)
+. egen double all_imp_fes=rowtotal(imp_fe_1-imp_fe_`NoC')
+
+. gen double imr_full=expndr/(all_imp_fes_`=`i'-2'*expndr_deu)
+
+. * Calculate real GDP
+. gen double rGDP_full_temp=p_full*output_bsln/(imr_full^(1/(1-sigma))) if exporter==importer
+(1,640 missing values generated)
+
+. bysort exporter: egen double rGDP_full=sum(rGDP_full_temp)
+
+. * Calculate expenditure
+. gen double expndr_full_temp=phi*output_full if exporter==importer
+(1,640 missing values generated)
+
+. bysort importer: egen double expndr_full=mean(expndr_full_temp)
+
+. * Calcualte baseline bilateral exports
+. gen trade_full=(output_full*expndr_full*t_ij_ctrf)/(imr_full*omr_full)
+
+. gen double exp_full=trade_full if exporter!=importer
+(41 missing values generated)
+
+. * Calculate total exports for each country
+. bysort exporter: egen double tot_exp_full=sum(exp_full)
+
+. * Calculate change in total exports for each country
+. gen double tot_exp_full_ch=(tot_exp_full-tot_exp_bsln)/tot_exp_bsln*100
+
+. * Save results
+. save full_static_all, replace
+(file full_static_all.dta not found)
+file full_static_all.dta saved
+
+. 
+. ******************************************
+. *Prepare All Indexes at the Country Level*
+. ******************************************
+. collapse imr_full imr_bsln imr_cndl, by(importer)
+
+. rename importer country
+
+. gen imr_full_ch=(imr_full-imr_bsln)/imr_bsln*100
+
+. gen imr_cndl_ch=(imr_cndl-imr_bsln)/imr_bsln*100
+
+. save imrs_all, replace
+(file imrs_all.dta not found)
+file imrs_all.dta saved
+
+. use full_static_all, clear
+
+. collapse omr_full omr_cndl omr_bsln rGDP_full rGDP_cndl rGDP_bsln tot_exp_* p_full* output_bsln acr*, by(exporter)
+
+. gen omr_full_ch=(omr_full-omr_bsln)/omr_bsln*100
+
+. gen omr_cndl_ch=(omr_cndl-omr_bsln)/omr_bsln*100
+
+. gen rGDP_full_ch=(rGDP_full-rGDP_bsln)/rGDP_bsln*100
+
+. gen rGDP_cndl_ch=(rGDP_cndl-rGDP_bsln)/rGDP_bsln*100
+
+. rename exporter country
+
+. joinby country using imrs_all
+
+. save all_indexes_geppml, replace
+(file all_indexes_geppml.dta not found)
+file all_indexes_geppml.dta saved
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\muham\EGEI Dissertation\GEPPML_data_code\GEPPML_stata\geppml.log
+  log type:  text
+ closed on:  19 Jan 2026, 10:38:10
+----------------------------------------------------------------------------------------------------------------------------------------------------------
