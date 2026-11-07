@@ -1,1 +1,4 @@
 original-code-and-data/
+*.o
+*.so
+*.dll

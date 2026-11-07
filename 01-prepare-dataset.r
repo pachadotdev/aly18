@@ -8,20 +8,23 @@ if (!require("haven")) install.packages("haven", repos = "https://cran.r-project
 library(data.table)
 library(haven)
 
-dt <- as.data.table(read_dta("original-data/ge_ppml_data_orig.dta"))
-dt <- dt[, .(exporter, importer, trade, LN_DIST, CNTG, BRDR)]
+aly18 <- as.data.table(read_dta("original-code-and-data/ge_ppml_data_orig.dta"))
+aly18 <- aly18[, .(exporter, importer, trade, LN_DIST, CNTG, BRDR)]
 
 # Aggregate variables: output by exporter and expenditure by importer
-dt[, output := sum(trade), by = exporter]
-dt[, expndr := sum(trade), by = importer]
+aly18[, output := sum(trade), by = exporter]
+aly18[, expndr := sum(trade), by = importer]
 
 # Germany is the reference country. It is renamed to "ZZZ" to be the last
 # category in Stata, so here we use "0-DEU" using the R convention for the
 # reference level
-dt[exporter == "DEU", exporter := "0-DEU"]
-dt[importer == "DEU", importer := "0-DEU"]
-dt[, expndr_deu := expndr[importer == "0-DEU"][1]]
-dt[, pair := paste(exporter, importer, sep = "-")]
+aly18[exporter == "DEU", exporter := "0-DEU"]
+aly18[importer == "DEU", importer := "0-DEU"]
+aly18[, expndr_deu := expndr[importer == "0-DEU"][1]]
+aly18[, pair := paste(exporter, importer, sep = "-")]
+
+colnames(aly18) <- tolower(colnames(aly18))
 
 try(dir.create("results"))
-fwrite(dt, "results/ge_ppml_data.csv")
+fwrite(aly18, "results/ge_ppml_data.csv")
+usethis::use_data(aly18, overwrite = TRUE)

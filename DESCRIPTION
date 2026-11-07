@@ -1,0 +1,22 @@
+Package: aly18
+Type: Package
+Title: Caliendo and Parro (2015) Quantitative Trade Model
+Version: 0.1.0
+Authors@R: c(person(
+        given = "Mauricio",
+        family = "Vargas Sepulveda",
+        role = c("aut", "cre"),
+        email = "m.vargas.sepulveda@gmail.com",
+        comment = c(ORCID = "0000-0003-1017-7574")
+    ))
+Description: Runs simulations using the Caliendo and Parro (2015)
+    quantitative trade model. Uses data.table for data processing and
+    armadillo4r for numerical computations.
+License: Apache License 2.0
+Encoding: UTF-8
+Depends: R (>= 4.0.0)
+Imports: capybara, data.table, stats
+LazyData: true
+LinkingTo: armadillo4r, cpp4r, Matrix
+Suggests: tinytest
+NeedsCompilation: yes
