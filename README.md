@@ -2,13 +2,14 @@
 
 Replication of 'GEPPML: General equilibrium analysis with PPML' (Anderson, Larch and Yotov, 2018).
 
-I could not find a working link to the original data used in the article, so I used a backup I found in the GEPPML-R repository (https://github.com/jamiubadmusng/GEPPML-R).
+I obtained the data by emailing the authors directly.
 
 I was able to replicate Tables 1-3 using [capybara](https://github.com/pachadotdev/capybara). See below.
 
-The code is organized into five scripts, `00-helpers.r` avoids repeating the same across the scripts, `01-prepare-dataset.r` can be skipped as the CSV used for the other scripts to create the tables was added to this repository.
+The code is organized into four scripts, `01-prepare-dataset.r` can be skipped as the CSV used for the other scripts to create the tables was added to this repository. The scripts in the main directory call internal R/C++ code organized to
+implement the non-linear solver to compare versus iterated regressions.
 
-Important note about multilateral resistances: OMR and IMR are power transforms of the price indexes, the paper reports the change in the price indexes. The indexes results in `original-data/all_indexes_geppml.dta` have to be transformed to compare with this independent replication.
+Important note about multilateral resistances: OMR and IMR are power transforms of the price indexes, the paper reports the change in the price indexes.
 
 To replicate the reported standard errors you need to use the `pair` variable to compute a sandwich variance-covariance matrix, as in this comparison:
 
