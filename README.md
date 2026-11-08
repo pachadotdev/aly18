@@ -15,13 +15,13 @@ To replicate the reported standard errors you need to use the `pair` variable to
 
 ```r
 > fit_bln <- fepoisson(
-+   trade ~ LN_DIST + CNTG + BRDR | exporter + importer,
++   trade ~ ln_dist + cntg + brdr | exporter + importer,
 +   data = dt,
 +   control = ctrl
 + )
 > 
 > summary(fit_bln)
-Formula: trade ~ LN_DIST + CNTG + BRDR | exporter + importer
+Formula: trade ~ ln_dist + cntg + brdr | exporter + importer
 
 Family: Poisson
 
@@ -29,9 +29,9 @@ Estimates:
 
 |         | Estimate | Std. Error | z value     | Pr(>|z|)  |
 |---------|----------|------------|-------------|-----------|
-| LN_DIST |  -0.9485 |     0.0000 | -35413.7422 | 0.0000 ** |
-| CNTG    |   0.4783 |     0.0001 |   9132.9997 | 0.0000 ** |
-| BRDR    |  -1.5546 |     0.0001 | -26558.7823 | 0.0000 ** |
+| ln_dist |  -0.9485 |     0.0000 | -35413.7422 | 0.0000 ** |
+| cntg    |   0.4783 |     0.0001 |   9132.9997 | 0.0000 ** |
+| brdr    |  -1.5546 |     0.0001 | -26558.7823 | 0.0000 ** |
 
 Significance codes: ** p < 0.01; * p < 0.05; + p < 0.10
 
@@ -48,7 +48,7 @@ Number of Fisher Scoring iterations: 11
 
 ```r
 > fit_bln <- fepoisson(
-+   trade ~ LN_DIST + CNTG + BRDR | exporter + importer | pair,
++   trade ~ ln_dist + cntg + brdr | exporter + importer | pair,
 +   data = dt,
 +   control = ctrl
 + )
@@ -56,7 +56,7 @@ Number of Fisher Scoring iterations: 11
 summary(fit_bln)
 > 
 > summary(fit_bln)
-Formula: trade ~ LN_DIST + CNTG + BRDR | exporter + importer | pair
+Formula: trade ~ ln_dist + cntg + brdr | exporter + importer | pair
 
 Family: Poisson
 
@@ -64,9 +64,9 @@ Estimates:
 
 |         | Estimate | Std. Error | z value  | Pr(>|z|)  |
 |---------|----------|------------|----------|-----------|
-| LN_DIST |  -0.9485 |     0.0524 | -18.1106 | 0.0000 ** |
-| CNTG    |   0.4783 |     0.1023 |   4.6769 | 0.0000 ** |
-| BRDR    |  -1.5546 |     0.1219 | -12.7541 | 0.0000 ** |
+| ln_dist |  -0.9485 |     0.0524 | -18.1106 | 0.0000 ** |
+| cntg    |   0.4783 |     0.1023 |   4.6769 | 0.0000 ** |
+| brdr    |  -1.5546 |     0.1219 | -12.7541 | 0.0000 ** |
 
 Significance codes: ** p < 0.01; * p < 0.05; + p < 0.10
 ```
