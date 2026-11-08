@@ -16,7 +16,7 @@ To replicate the reported standard errors you need to use the `pair` variable to
 ```r
 > fit_bln <- fepoisson(
 +   trade ~ ln_dist + cntg + brdr | exporter + importer,
-+   data = dt,
++   data = aly2018,
 +   control = ctrl
 + )
 > 
@@ -49,7 +49,7 @@ Number of Fisher Scoring iterations: 11
 ```r
 > fit_bln <- fepoisson(
 +   trade ~ ln_dist + cntg + brdr | exporter + importer | pair,
-+   data = dt,
++   data = aly2018,
 +   control = ctrl
 + )
 
