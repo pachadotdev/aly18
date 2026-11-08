@@ -24,4 +24,4 @@
 #' @references
 #' Anderson, James E., Mario Larch, and Yoto V. Yotov. "GEPPML: General equilibrium analysis with PPML."
 #' \emph{The World Economy} 41, no. 10 (2018): 2750-2782.
-"aly18"
+"aly2018"

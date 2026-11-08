@@ -15,5 +15,5 @@
 #' @details The last country is the reference country (its inward resistance is
 #'   normalised to one).
 nls_geppml_ <- function(t_bln, t_ctrf, q, phi, sigma, tol, maxiter, trace) {
-	.Call(`_aly18_nls_geppml_`, t_bln, t_ctrf, q, phi, sigma, tol, maxiter, trace)
+	.Call(`_aly2018_nls_geppml_`, t_bln, t_ctrf, q, phi, sigma, tol, maxiter, trace)
 }

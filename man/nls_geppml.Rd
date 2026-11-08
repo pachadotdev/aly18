@@ -20,7 +20,7 @@ nls_geppml(
 
 \arguments{
 \item{data}{a data.frame with the columns exporter, importer, trade, output,
-expndr and the regressors (e.g., \code{aly18}). Output is the sum of trade by
+expndr and the regressors (e.g., \code{aly2018}). Output is the sum of trade by
 exporter and expenditure the sum of trade by importer.}
 
 \item{formula}{the gravity specification, with the regressors being columns of
@@ -66,7 +66,7 @@ those from the regression-based approach.
 
 \examples{
 \dontrun{
-nls_geppml(aly18, ref_country = "0-DEU")
+nls_geppml(aly2018, ref_country = "0-DEU")
 }
 }
 
