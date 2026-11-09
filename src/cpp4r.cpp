@@ -7,10 +7,10 @@
 #include <R_ext/Visibility.h>
 
 // aly2018.cpp
-sexp nls_geppml_(sexp t_bln, sexp t_ctrf, sexp q, sexp phi, double sigma, double tol, int maxiter, bool trace);
+list nls_geppml_(doubles_matrix<> t_bln, doubles_matrix<> t_ctrf, doubles q, doubles phi, double sigma, double tol, int maxiter, bool trace);
 extern "C" SEXP _aly2018_nls_geppml_(SEXP t_bln, SEXP t_ctrf, SEXP q, SEXP phi, SEXP sigma, SEXP tol, SEXP maxiter, SEXP trace) {
   BEGIN_CPP4R
-    return cpp4r::as_sexp(nls_geppml_(cpp4r::as_cpp<cpp4r::decay_t<sexp>>(t_bln), cpp4r::as_cpp<cpp4r::decay_t<sexp>>(t_ctrf), cpp4r::as_cpp<cpp4r::decay_t<sexp>>(q), cpp4r::as_cpp<cpp4r::decay_t<sexp>>(phi), cpp4r::as_cpp<cpp4r::decay_t<double>>(sigma), cpp4r::as_cpp<cpp4r::decay_t<double>>(tol), cpp4r::as_cpp<cpp4r::decay_t<int>>(maxiter), cpp4r::as_cpp<cpp4r::decay_t<bool>>(trace)));
+    return cpp4r::as_sexp(nls_geppml_(cpp4r::as_cpp<cpp4r::decay_t<doubles_matrix<>>>(t_bln), cpp4r::as_cpp<cpp4r::decay_t<doubles_matrix<>>>(t_ctrf), cpp4r::as_cpp<cpp4r::decay_t<doubles>>(q), cpp4r::as_cpp<cpp4r::decay_t<doubles>>(phi), cpp4r::as_cpp<cpp4r::decay_t<double>>(sigma), cpp4r::as_cpp<cpp4r::decay_t<double>>(tol), cpp4r::as_cpp<cpp4r::decay_t<int>>(maxiter), cpp4r::as_cpp<cpp4r::decay_t<bool>>(trace)));
   END_CPP4R
 }
 
