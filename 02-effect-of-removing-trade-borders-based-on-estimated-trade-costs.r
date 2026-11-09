@@ -40,7 +40,13 @@ aly2018[, t_ij_ctrf := fifelse(exporter == importer, t_ij_bln, exp(b["ln_dist"] 
 aly2018[, t_ij_ctrf_1 := log(t_ij_ctrf)]
 
 # baseline indexes, equations (7) and (8)
-add_fes(aly2018, fit_bln, "exp_fes_bln", "imp_fes_bln")
+aly2018 <- add_fe_to_df(
+  aly2018, fit_bln, col_names = c(exporter = "exp_fes_bln", importer = "imp_fes_bln")
+)
+fe_ref <- fixed_effects(fit_bln, "importer")[[ref_country]]
+aly2018[, c("exp_fes_bln", "imp_fes_bln") := .(
+  exp(exp_fes_bln + fe_ref), exp(imp_fes_bln - fe_ref)
+)]
 
 aly2018[, omr_bln := output * expndr_deu / exp_fes_bln]
 aly2018[, imr_bln := expndr / (imp_fes_bln * expndr_deu)]
@@ -59,7 +65,13 @@ fit_cdl <- fepoisson(
 )
 
 aly2018[, trade_cdl := predict(fit_cdl)]
-add_fes(aly2018, fit_cdl, "exp_fes_cdl", "imp_fes_cdl")
+aly2018 <- add_fe_to_df(
+  aly2018, fit_cdl, col_names = c(exporter = "exp_fes_cdl", importer = "imp_fes_cdl")
+)
+fe_ref <- fixed_effects(fit_cdl, "importer")[[ref_country]]
+aly2018[, c("exp_fes_cdl", "imp_fes_cdl") := .(
+  exp(exp_fes_cdl + fe_ref), exp(imp_fes_cdl - fe_ref)
+)]
 
 aly2018[, omr_cdl := output * expndr_deu / exp_fes_cdl]
 aly2018[, imr_cdl := expndr / (imp_fes_cdl * expndr_deu)]
@@ -105,7 +117,13 @@ while (sd_diff > 1e-3 | max_diff > 1e-3) {
   )
 
   aly2018[, trade_pred := predict(fit_iter)]
-  add_fes(aly2018, fit_iter, "exp_fes", "imp_fes")
+  aly2018 <- add_fe_to_df(
+    aly2018, fit_iter, col_names = c(exporter = "exp_fes", importer = "imp_fes")
+  )
+  fe_ref <- fixed_effects(fit_iter, "importer")[[ref_country]]
+  aly2018[, c("exp_fes", "imp_fes") := .(
+    exp(exp_fes + fe_ref), exp(imp_fes - fe_ref)
+  )]
   aly2018[, fes_dom := exp_fes[exporter == importer], by = importer]
 
   # update output and expenditure
